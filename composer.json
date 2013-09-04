@@ -1,0 +1,28 @@
+{
+    "name": "MadLab/PHPCornerstone-Core",
+    "type": "framework",
+    "description": "PHP Cornerstone: an MVC framework focused on code organization, intelligent routing, and facilitating DRY principles.",
+    "keywords": ["framework, mvc"],
+    "homepage": "http://www.phpcornerstone.com",
+    "authors": [
+        {
+            "name": "Nick Ashley",
+            "email": "nick@madlab.com"
+        },
+        {
+            "name": "Robert Gentel",
+            "email": "robert@madlab.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "respect/validation": "dev-develop",
+        "ircmaxell/password-compat": "dev-master",
+        "twig/twig": "1.14.*@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "MadLab\\Cornerstone": "src\/"
+        }
+    }
+}
