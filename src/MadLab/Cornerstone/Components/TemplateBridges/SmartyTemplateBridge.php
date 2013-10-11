@@ -18,6 +18,6 @@ class SmartyTemplateBridge implements TemplateBridgeInterface{
     }
 
     public function display($view){
-        $this->smarty->display($view);
+        $this->smarty->display($view . '.tpl');
     }
 }

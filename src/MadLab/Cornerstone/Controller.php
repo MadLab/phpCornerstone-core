@@ -79,7 +79,7 @@ class Controller
     public function display()
     {
 
-        if($this->templateEnabled && $this->view){
+        if($this->templateEnabled && property_exists($this, 'view')){
             $this->templateBridge->display($this->view);
         }
     }
