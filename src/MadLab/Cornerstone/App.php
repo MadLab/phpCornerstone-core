@@ -61,9 +61,9 @@ class App
         }
 
         if (empty($path)) {
-            $controllerPath = 'pages/';
+            $controllerPath = '';
         } elseif (is_dir('pages/' . $path) && is_readable('pages/' . $path . '/controller.php')) {
-            $controllerPath = 'pages/' . $path . '/';
+            $controllerPath = $path . '/';
         } elseif (is_readable('pages/' . $path)) {
             $file = 'pages/' . $path;
 
@@ -93,7 +93,7 @@ class App
             throw new \Exception("404 Not Found");
         }
 
-        include $controllerPath . 'Controller.php';
+        include 'pages/' . $controllerPath . 'Controller.php';
         $controller = new Controller();
         $controller->set_args($this->args);
 
@@ -133,7 +133,7 @@ class App
         if ($this->session instanceof SessionBridgeInterface) {
             return $this->session;
         } else {
-            throw new Exception('No Session Handler Initialized');
+            return false;
         }
     }
 
