@@ -15,10 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3",
-        "respect/validation": "dev-develop",
-        "ircmaxell/password-compat": "dev-master",
-        "twig/twig": "1.14.*@dev"
+        "php": ">=5.3"
     },
     "autoload": {
         "psr-0": {
