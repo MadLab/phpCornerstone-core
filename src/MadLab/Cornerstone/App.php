@@ -10,6 +10,7 @@ class App
 {
     public static $instance;
     public $path;
+    public $environment;
     public $config;
     public $dependencies;
     public $session;
@@ -18,6 +19,8 @@ class App
     public function __construct($path = false)
     {
         $this->path = $path;
+        $this->environment = 'production';
+
         $this->loadConfig();
     }
 
@@ -105,6 +108,16 @@ class App
         }
         $controller->get();
 
+    }
+
+    public function detectEnvironment($environments = array()){
+        foreach($environments as $name=>$environment){
+            if(substr($_SERVER['SERVER_NAME'], -strlen($environment)) === $environment){
+                $this->environment = $name;
+                $this->config->loadDirectory($this->path . "/config/" . $this->environment);
+                break;
+            }
+        }
     }
 
     private function loadConfig()

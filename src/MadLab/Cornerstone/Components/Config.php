@@ -48,13 +48,17 @@ class Config
         if(!is_readable($directory)){
             throw new \Exception("Config Directory Unreadable");
         }
+
         $files = scandir($directory);
+
         foreach($files as $file){
             if($file == '.' || $file == '..'){
                 continue;
             }
-            $this->loadFile($directory . '/' . $file);
-
+            $fileParts = pathinfo($file);
+            if(array_key_exists('extension', $fileParts) && $fileParts['extension'] == 'php'){
+                $this->loadFile($directory . '/' . $file);
+            }
         }
     }
 
