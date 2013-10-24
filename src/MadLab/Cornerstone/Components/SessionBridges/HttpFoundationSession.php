@@ -28,11 +28,15 @@ class HttpFoundationSession implements SessionBridgeInterface{
         return false;
     }
 
-    public static function regenerate(){
+    public static function migrate(){
         return self::$session->migrate();
     }
 
     public static function clear(){
         return self::$session->clear();
+    }
+
+    public static function destroy(){
+        return self::$session->invalidate();
     }
 }

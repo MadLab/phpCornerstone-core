@@ -15,12 +15,12 @@ class Config
      *
      * @return null|String The value
      */
-    public static function get($key)
+    public static function get($key, $default = null)
     {
         if (array_key_exists($key, self::$_data)) {
             return self::$_data[$key];
-        } else {
-            return null;
+        } else{
+            return $default;
         }
     }
 

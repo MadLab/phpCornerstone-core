@@ -4,7 +4,7 @@ namespace MadLab\Cornerstone\Components;
 
 use MadLab\Cornerstone\App;
 
-abstract class Model
+class Model
 {
 
     public function resolve($dependency){

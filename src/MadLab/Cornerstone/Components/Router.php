@@ -6,14 +6,20 @@ class Router
 {
     public $subdomain = false;
     public $path;
+    public $redirectLocation;
     public $controller;
     public $regexArray;
     public $pathVariables;
     public static $routes = array();
 
-    public function __construct(){
+    public function __construct($subdomain = false){
         $this->domain = Config::get('NAKED_DOMAIN');
-        $this->subdomain = Config::get('DEFAULT_SUBDOMAIN');
+        if($subdomain){
+            $this->subdomain = $subdomain;
+        }
+        else{
+            $this->subdomain = Config::get('DEFAULT_SUBDOMAIN');
+        }
 
 
     }
@@ -140,6 +146,7 @@ class Router
             if (preg_match('|^' . $subdomainRegex . '$|', $subdomain, $subdomainMatches)) {
                 array_shift($subdomainMatches);
                 foreach ($subdomainMatches as $match) {
+
                     $this->pathVariables[array_shift($pathVariables)] = $match;
                 }
                 return true;
@@ -173,6 +180,7 @@ class Router
         preg_match_all("|<([-_a-zA-Z0-9]+)>|", $this->path, $namedParameterMatches);
         if ($namedParameterMatches[0]) {
             $pathRegex = $this->path;
+
             $pathVariables = array();
             foreach ($namedParameterMatches[1] as $capture) {
                 $pathVariables[] = $capture;

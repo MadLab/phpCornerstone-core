@@ -61,12 +61,12 @@ class Url
         if ($path == '/') {
             $path = '';
         }
+
         $uri = $protocol . '://' . $subdomain . $cs->config->get('NAKED_DOMAIN') . $path;
 
         if ($appendArgs && !empty(self::$_args)) {
             $uri = self::addArgsToUrl($uri);
         }
-
 
         return $uri;
     }

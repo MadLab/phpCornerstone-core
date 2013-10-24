@@ -9,6 +9,7 @@ class Controller
     public $templateBridge;
     public $templateEnabled;
     public $app;
+    protected  $_args;
     public function __construct()
     {
         $this->app = App::getInstance();
@@ -115,6 +116,6 @@ class Controller
      */
     protected function get_arg($arg)
     {
-        return $this->_args[$arg];
+        return array_key_exists($arg, $this->_args)?$this->_args[$arg]:false;
     }
 }

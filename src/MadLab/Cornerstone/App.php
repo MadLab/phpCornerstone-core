@@ -42,21 +42,28 @@ class App
     public function run()
     {
         $route = $this->findCustomRoute();
-
         $this->domain = $_SERVER['HTTP_HOST'];
         $this->url = $_SERVER['REQUEST_URI'];
         $this->args = $_GET;
-
 
         if ($route) {
             $path = $route->controller;
             $this->args = $route->pathVariables;
         } else {
             $subdomainFolder = "";
-            $subdomain = str_replace($this->config->NAKED_DOMAIN, '', $this->domain);
+            $subdomain = str_replace($this->config->get('NAKED_DOMAIN'), '', $this->domain);
             if (substr($subdomain, -1) == '.') {
                 $subdomain = substr($subdomain, 0, -1);
-                $subdomainFolder = '_' . $subdomain . '_/';
+                if($subdomain != $this->config->get('DEFAULT_SUBDOMAIN')){
+                    $subdomainFolder = '_' . $subdomain . '_/';
+
+                    if (!is_dir( 'pages/'. $subdomainFolder)) {
+                        if (is_dir('pages/' . '_*_/')) {
+                            $subdomainFolder = '_*_/';
+                        }
+                    }
+                    $this->args['subdomain'] = $subdomain;
+                }
             }
 
             $path = \MadLab\Cornerstone\Utilities\Url::convertUrlToPath($this->url);
@@ -65,7 +72,7 @@ class App
 
         if (empty($path)) {
             $controllerPath = '';
-        } elseif (is_dir('pages/' . $path) && is_readable('pages/' . $path . '/controller.php')) {
+        } elseif (is_dir('pages/' . $path) && is_readable('pages/' . $path . '/Controller.php')) {
             $controllerPath = $path . '/';
         } elseif (is_readable('pages/' . $path)) {
             $file = 'pages/' . $path;

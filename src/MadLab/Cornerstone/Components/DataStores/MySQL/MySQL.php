@@ -107,7 +107,7 @@ class MySQL
                 return $statement->fetchAll(PDO::FETCH_BOTH);
             } else {
                 $e = $statement->errorInfo();
-                throw new Exception($e[2]);
+                throw new \Exception($e[2]);
                 return false;
             }
         } catch (PDOException $e) {
