@@ -52,9 +52,8 @@ class Url
      */
     public static function uri($path, $protocol = 'http', $subdomain = false, $appendArgs = false)
     {
-        $cs = App::getInstance();
 
-        $subdomain = $subdomain ? $subdomain : $cs->config->get('DEFAULT_SUBDOMAIN');
+        $subdomain = $subdomain ? $subdomain : \Config::get('DEFAULT_SUBDOMAIN');
         if (!empty($subdomain)) {
             $subdomain .= '.';
         }
@@ -62,7 +61,8 @@ class Url
             $path = '';
         }
 
-        $uri = $protocol . '://' . $subdomain . $cs->config->get('NAKED_DOMAIN') . $path;
+        $uri = $protocol . '://' . $subdomain . \Config::get('NAKED_DOMAIN') . $path;
+
 
         if ($appendArgs && !empty(self::$_args)) {
             $uri = self::addArgsToUrl($uri);
