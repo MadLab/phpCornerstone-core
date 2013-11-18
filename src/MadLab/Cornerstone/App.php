@@ -6,7 +6,8 @@ use MadLab\Cornerstone\Components\Router;
 use MadLab\Cornerstone\Components\SessionBridges\SessionBridgeInterface;
 use MadLab\Cornerstone\Components\TemplateBridges\TemplateBridgeInterface;
 use Controller;
-class App
+
+class   App
 {
     public static $instance;
     public $path;
@@ -20,6 +21,26 @@ class App
     {
         $this->path = $path;
         $this->environment = 'production';
+
+        set_exception_handler(
+            function (\Exception $e) {
+                if ($e->getCode() == '404') {
+                    header('HTTP/1.0 404 Not Found');
+                    if (is_readable('errorPages/404/Controller.php')) {
+                        include 'errorPages/404/Controller.php';
+                        $controller = new Controller();
+                        if ($controller->templateEnabled !== false && App::getInstance()->template instanceof TemplateBridgeInterface) {
+                            $controller->setTemplateBridge(App::getInstance()->template);
+                            $controller->view = 'errorPages/404/view';
+                        }
+                        $controller->get();
+
+                    }
+
+
+                }
+            }
+        );
 
         $this->loadConfig();
     }
@@ -54,10 +75,10 @@ class App
             $subdomain = str_replace($this->config->get('NAKED_DOMAIN'), '', $this->domain);
             if (substr($subdomain, -1) == '.') {
                 $subdomain = substr($subdomain, 0, -1);
-                if($subdomain != $this->config->get('DEFAULT_SUBDOMAIN')){
+                if ($subdomain != $this->config->get('DEFAULT_SUBDOMAIN')) {
                     $subdomainFolder = '_' . $subdomain . '_/';
 
-                    if (!is_dir( 'pages/'. $subdomainFolder)) {
+                    if (!is_dir('pages/' . $subdomainFolder)) {
                         if (is_dir('pages/' . '_*_/')) {
                             $subdomainFolder = '_*_/';
                         }
@@ -100,14 +121,13 @@ class App
             readfile($file);
             die();
         } else {
-            throw new \Exception("404 Not Found");
+            throw new \Exception("404 Not Found", 404);
         }
 
         include 'pages/' . $controllerPath . 'Controller.php';
         $controller = new Controller();
         $controller->set_args($this->args);
 
-        //todo: add pre controller hook which adds session dependency
         $controller->session = $this->getSessionHandler();
         if ($controller->templateEnabled !== false && $this->template instanceof TemplateBridgeInterface) {
             $controller->setTemplateBridge($this->template);
@@ -117,9 +137,10 @@ class App
 
     }
 
-    public function detectEnvironment($environments = array()){
-        foreach($environments as $name=>$environment){
-            if(substr($_SERVER['SERVER_NAME'], -strlen($environment)) === $environment){
+    public function detectEnvironment($environments = array())
+    {
+        foreach ($environments as $name => $environment) {
+            if (substr($_SERVER['SERVER_NAME'], -strlen($environment)) === $environment) {
                 $this->environment = $name;
                 $this->config->loadDirectory($this->path . "/config/" . $this->environment);
                 break;
