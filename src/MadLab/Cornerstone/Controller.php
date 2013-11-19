@@ -9,13 +9,15 @@ class Controller
     public $templateBridge;
     public $templateEnabled;
     public $app;
-    protected  $_args;
+    protected $_args;
+
     public function __construct()
     {
         $this->app = App::getInstance();
     }
 
-    public function setTemplateBridge(TemplateBridgeInterface $templateBridge){
+    public function setTemplateBridge(TemplateBridgeInterface $templateBridge)
+    {
         $this->templateBridge = $templateBridge;
         $this->templateEnabled = true;
     }
@@ -39,10 +41,9 @@ class Controller
      */
     public function set($key, $val)
     {
-        if($this->templateEnabled){
+        if ($this->templateEnabled) {
             $this->templateBridge->set($key, $val);
-        }
-        else{
+        } else {
             throw new Exception('Template Handler Not Enabled');
         }
     }
@@ -56,10 +57,9 @@ class Controller
      */
     public function process($template)
     {
-        if($this->templateEnabled){
+        if ($this->templateEnabled) {
             $this->templateBridge->process($template);
-        }
-        else{
+        } else {
             throw new \Exception('Template Handler Not Enabled');
         }
     }
@@ -69,7 +69,7 @@ class Controller
      */
     public function __destruct()
     {
-        if($this->templateEnabled){
+        if ($this->templateEnabled) {
             $this->display();
         }
     }
@@ -80,7 +80,7 @@ class Controller
     public function display()
     {
 
-        if($this->templateEnabled && property_exists($this, 'view')){
+        if ($this->templateEnabled && property_exists($this, 'view')) {
             $this->templateBridge->display($this->view);
         }
     }
@@ -116,6 +116,9 @@ class Controller
      */
     protected function get_arg($arg)
     {
-        return array_key_exists($arg, $this->_args)?$this->_args[$arg]:false;
+        if (is_array($this->_args) && isset($this->_args[$arg])) {
+            return $this->_args[$arg];
+        }
+        return false;
     }
 }
