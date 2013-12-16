@@ -69,7 +69,7 @@ class Controller
      */
     public function __destruct()
     {
-        if ($this->templateEnabled) {
+        if ($this->templateEnabled && !App::$error) {
             $this->display();
         }
     }

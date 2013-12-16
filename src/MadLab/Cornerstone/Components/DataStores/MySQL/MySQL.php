@@ -208,6 +208,50 @@ class MySQL
         return static::$connection->lastInsertId();
     }
 
+
+    /**
+     * Convenience function to insert multiple rows at once
+     *
+     * @param array $table Table to insert into
+     * @param array $fields Nested Array, each Item is Array of key=>value containing columns to insert into
+     *
+     * @return int The last insert ID
+     */
+    public static function massInsert($table, $rows)
+    {
+        $params = array();
+        $fieldList = array();
+        $valueList = array();
+
+        $fields = $rows[0];
+
+        foreach ((array)$fields as $field => $value) {
+            $fieldList[] = "`" . $field . "`";
+            $valueList[] = '?';
+            $params[] = $value;
+        }
+        $fieldList = implode(",", $fieldList);
+        $valueList = implode(",", $valueList);
+        $query = "insert into $table($fieldList) values ($valueList)";
+
+
+        try {
+            $statement = static::$connection->prepare($query);
+            foreach($rows as $row){
+                $params = array_values($row);
+                if (!$statement->execute($params)) {
+                    $e = $statement->errorInfo();
+                    throw new \Exception($e[2]);
+                    return false;
+                }
+            }
+        } catch (PDOException $e) {
+            throw new \Exception($e->getMessage());
+        }
+
+        return count($rows);
+    }
+
     public static function upsert($table, $fields)
     {
         $params = array();

@@ -14,10 +14,14 @@ class SmartyTemplateBridge implements TemplateBridgeInterface{
     }
 
     public function process($view){
-        $this->smarty->fetch($view);
+        return $this->smarty->fetch($view);
     }
 
     public function display($view){
         $this->smarty->display($view . '.tpl');
+    }
+
+    public function setTemplateDir($dir){
+        $this->smarty->setTemplateDir($dir);
     }
 }

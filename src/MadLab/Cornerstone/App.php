@@ -10,6 +10,7 @@ use Controller;
 class   App
 {
     public static $instance;
+    public static $error;
     public $path;
     public $environment;
     public $config;
@@ -28,7 +29,7 @@ class   App
                     header('HTTP/1.0 404 Not Found');
                     if (is_readable('errorPages/404/Controller.php')) {
                         include 'errorPages/404/Controller.php';
-                        $controller = new Controller();
+                        $controller = new \ErrorController();
                         if ($controller->templateEnabled !== false && App::getInstance()->template instanceof TemplateBridgeInterface) {
                             $controller->setTemplateBridge(App::getInstance()->template);
                             $controller->view = 'errorPages/404/view';
@@ -208,6 +209,23 @@ class   App
         }
         header('Location: ' . $location);
         die();
+    }
+
+    public static function notFound(){
+        self::$error = true;
+        header('HTTP/1.0 404 Not Found');
+
+        if (is_readable('errorPages/404/Controller.php')) {
+            include 'errorPages/404/Controller.php';
+            $controller = new \ErrorController();
+            if ($controller->templateEnabled !== false && App::getInstance()->template instanceof TemplateBridgeInterface) {
+                $controller->setTemplateBridge(App::getInstance()->template);
+                $controller->view = 'errorPages/404/view';
+            }
+            $controller->get();
+            $controller->display();
+            die();
+        }
     }
 
 }
