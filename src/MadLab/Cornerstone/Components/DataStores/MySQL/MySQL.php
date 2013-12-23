@@ -120,7 +120,7 @@ class MySQL
      * Convenience function to return a single row when executing a 'get' style query. Used when fetching a single row.
      *
      * @param  string $query The parameterized query to execute
-     * @param array $params Array of parameters to fill query with
+     * @param array|string $params Array of parameters to fill query with
      *
      * @return boolean|array Single row result, or false on error
      */
