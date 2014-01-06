@@ -25,6 +25,7 @@ class   App
 
         set_exception_handler(
             function (\Exception $e) {
+                App::$error = true;
                 if ($e->getCode() == '404') {
                     header('HTTP/1.0 404 Not Found');
                     if (is_readable('errorPages/404/Controller.php')) {
@@ -35,10 +36,24 @@ class   App
                             $controller->view = 'errorPages/404/view';
                         }
                         $controller->get();
-
+                        $controller->display();
                     }
+                }
+                else{
+                    if (is_readable('errorPages/exception/Controller.php')) {
+                        include 'errorPages/exception/Controller.php';
+                        $controller = new \ErrorController();
 
-
+                        $app = App::getInstance();
+                        if ($controller->templateEnabled !== false && $app->template instanceof TemplateBridgeInterface) {
+                            $controller->setTemplateBridge($app->template);
+                            $controller->view = 'errorPages/exception/view';
+                        }
+                        $controller->set_args(array('exception'=> $e));
+                        $controller->get();
+                        $controller->display();
+                    }
+                    die();
                 }
             }
         );
@@ -135,6 +150,7 @@ class   App
             $controller->view = $controllerPath . 'view';
         }
         $controller->get();
+        $controller->display();
 
     }
 

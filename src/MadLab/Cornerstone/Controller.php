@@ -44,7 +44,7 @@ class Controller
         if ($this->templateEnabled) {
             $this->templateBridge->set($key, $val);
         } else {
-            throw new Exception('Template Handler Not Enabled');
+            throw new \Exception('Template Handler Not Enabled');
         }
     }
 
@@ -65,21 +65,10 @@ class Controller
     }
 
     /**
-     * Automatically called at end of page execution. This will output the template to browser, if applicable.
-     */
-    public function __destruct()
-    {
-        if ($this->templateEnabled && !App::$error) {
-            $this->display();
-        }
-    }
-
-    /**
      * Outputs the associated template to browser
      */
     public function display()
     {
-
         if ($this->templateEnabled && property_exists($this, 'view')) {
             $this->templateBridge->display($this->view);
         }
