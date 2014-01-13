@@ -37,6 +37,8 @@ class HttpFoundationSession implements SessionBridgeInterface{
     }
 
     public static function destroy(){
-        return self::$session->invalidate();
+        self::clear();
+        self::migrate();
+        //return self::$session->invalidate();
     }
 }
