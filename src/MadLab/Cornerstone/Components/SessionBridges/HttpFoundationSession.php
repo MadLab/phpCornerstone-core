@@ -20,6 +20,9 @@ class HttpFoundationSession implements SessionBridgeInterface{
         return self::$session->get($key);
     }
 
+    public static function take($key){
+        return self::$session->remove($key);
+    }
     public static function has($key){
         $result = self::get($key);
         if($result){
