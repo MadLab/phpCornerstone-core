@@ -50,7 +50,7 @@ class Url
      *
      * @return string The full URL String
      */
-    public static function uri($path, $protocol = 'http', $subdomain = false, $appendArgs = false)
+    public static function uri($path, $protocol = 'http', $subdomain = false, $appendArgs = true)
     {
 
         $subdomain = $subdomain ? $subdomain : \Config::get('DEFAULT_SUBDOMAIN');

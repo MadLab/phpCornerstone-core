@@ -41,9 +41,12 @@ class Controller
      */
     public function set($key, $val)
     {
-        if ($this->templateEnabled) {
-            $this->templateBridge->set($key, $val);
-        } else {
+        if($this->templateBridge){
+            if ($this->templateEnabled) {
+                $this->templateBridge->set($key, $val);
+            }
+        }
+        else{
             throw new \Exception('Template Handler Not Enabled');
         }
     }

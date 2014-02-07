@@ -2,6 +2,7 @@
 
 namespace MadLab\Cornerstone;
 
+use Carbon\Carbon;
 use MadLab\Cornerstone\Components\Router;
 use MadLab\Cornerstone\Components\SessionBridges\SessionBridgeInterface;
 use MadLab\Cornerstone\Components\TemplateBridges\TemplateBridgeInterface;
@@ -11,6 +12,7 @@ class   App
 {
     public static $instance;
     public static $error;
+    public static $appStartTime;
     public $path;
     public $environment;
     public $config;
@@ -18,8 +20,10 @@ class   App
     public $session;
     public $template;
 
+
     public function __construct($path = false)
     {
+        self::$appStartTime = microtime();
         $this->path = $path;
         $this->environment = 'production';
         set_exception_handler(
@@ -30,15 +34,16 @@ class   App
                     if (is_readable('errorPages/404/Controller.php')) {
                         include 'errorPages/404/Controller.php';
                         $controller = new \ErrorController();
-                        if ($controller->templateEnabled !== false && App::getInstance()->template instanceof TemplateBridgeInterface) {
+                        if ($controller->templateEnabled !== false && App::getInstance(
+                            )->template instanceof TemplateBridgeInterface
+                        ) {
                             $controller->setTemplateBridge(App::getInstance()->template);
                             $controller->view = 'errorPages/404/view';
                         }
                         $controller->get();
                         $controller->display();
                     }
-                }
-                else{
+                } else {
                     if (is_readable('errorPages/exception/Controller.php')) {
                         include 'errorPages/exception/Controller.php';
                         $controller = new \ErrorController();
@@ -48,7 +53,7 @@ class   App
                             $controller->setTemplateBridge($app->template);
                             $controller->view = 'errorPages/exception/view';
                         }
-                        $controller->set_args(array('exception'=> $e));
+                        $controller->set_args(array('exception' => $e));
                         $controller->get();
                         $controller->display();
                     }
@@ -109,12 +114,12 @@ class   App
             $controllerPath = '';
         } elseif (is_dir('pages/' . $path) && is_readable('pages/' . $path . '/Controller.php')) {
             $controllerPath = $path . '/';
-        } elseif (is_readable('pages/' . $path)) {
+        } elseif (is_readable('pages/' . $path) && is_file('pages/' . $path)) {
             $file = 'pages/' . $path;
 
             $filePathInfo = pathinfo($file);
-            $fileExtention = $filePathInfo['extension'];
-            switch ($fileExtention) {
+            $fileExtension = $filePathInfo['extension'];
+            switch ($fileExtension) {
                 case 'css':
                     header("Content-type: text/css");
                     break;
@@ -147,8 +152,10 @@ class   App
             $controller->setTemplateBridge($this->template);
             $controller->view = $controllerPath . 'view';
         }
+
         $controller->get();
         $controller->display();
+
 
     }
 
@@ -227,14 +234,23 @@ class   App
         die();
     }
 
-    public static function notFound(){
+    public static function executionTime()
+    {
+
+        return round(microtime()- self::$appStartTime,2);
+    }
+
+    public static function notFound()
+    {
         self::$error = true;
         header('HTTP/1.0 404 Not Found');
 
         if (is_readable('errorPages/404/Controller.php')) {
             include 'errorPages/404/Controller.php';
             $controller = new \ErrorController();
-            if ($controller->templateEnabled !== false && App::getInstance()->template instanceof TemplateBridgeInterface) {
+            if ($controller->templateEnabled !== false && App::getInstance(
+                )->template instanceof TemplateBridgeInterface
+            ) {
                 $controller->setTemplateBridge(App::getInstance()->template);
                 $controller->view = 'errorPages/404/view';
             }
