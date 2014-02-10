@@ -23,7 +23,7 @@ class   App
 
     public function __construct($path = false)
     {
-        self::$appStartTime = microtime();
+        self::$appStartTime = microtime(true);
         $this->path = $path;
         $this->environment = 'production';
         set_exception_handler(
@@ -237,7 +237,7 @@ class   App
     public static function executionTime()
     {
 
-        return round(microtime()- self::$appStartTime,2);
+        return round(microtime(true)- self::$appStartTime,2);
     }
 
     public static function notFound()
