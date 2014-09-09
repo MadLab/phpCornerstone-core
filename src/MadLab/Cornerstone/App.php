@@ -26,41 +26,7 @@ class   App
         self::$appStartTime = microtime(true);
         $this->path = $path;
         $this->environment = 'production';
-        set_exception_handler(
-            function (\Exception $e) {
-                App::$error = true;
-                if ($e->getCode() == '404') {
-                    header('HTTP/1.0 404 Not Found');
-                    if (is_readable('errorPages/404/Controller.php')) {
-                        include 'errorPages/404/Controller.php';
-                        $controller = new \ErrorController();
-                        if ($controller->templateEnabled !== false && App::getInstance(
-                            )->template instanceof TemplateBridgeInterface
-                        ) {
-                            $controller->setTemplateBridge(App::getInstance()->template);
-                            $controller->view = 'errorPages/404/view';
-                        }
-                        $controller->get();
-                        $controller->display();
-                    }
-                } else {
-                    if (is_readable('errorPages/exception/Controller.php')) {
-                        include 'errorPages/exception/Controller.php';
-                        $controller = new \ErrorController();
 
-                        $app = App::getInstance();
-                        if ($controller->templateEnabled !== false && $app->template instanceof TemplateBridgeInterface) {
-                            $controller->setTemplateBridge($app->template);
-                            $controller->view = 'errorPages/exception/view';
-                        }
-                        $controller->set_args(array('exception' => $e));
-                        $controller->get();
-                        $controller->display();
-                    }
-                    die();
-                }
-            }
-        );
         $this->loadConfig();
     }
 
@@ -125,6 +91,9 @@ class   App
                     break;
                 case 'js':
                     header("Content-type: text/javascript");
+                    break;
+                case 'svg':
+                    header("Content-Type: image/svg+xml");
                     break;
                 default:
                     if (function_exists('finfo_open')) {
