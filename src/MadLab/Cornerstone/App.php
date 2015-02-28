@@ -19,6 +19,7 @@ class   App
     public $dependencies;
     public $session;
     public $template;
+    private $routers;
 
 
     public function __construct($path = false)
@@ -26,7 +27,7 @@ class   App
         self::$appStartTime = microtime(true);
         $this->path = $path;
         $this->environment = 'production';
-
+        $this->routers = array();
         $this->loadConfig();
     }
 
@@ -44,88 +45,59 @@ class   App
         return self::$instance;
     }
 
+    public static function addRouter($router){
+        self::$instance->routers[] = $router;
+    }
+
 
     public function run()
     {
-        $route = $this->findCustomRoute();
-        $this->domain = $_SERVER['HTTP_HOST'];
-        $this->url = $_SERVER['REQUEST_URI'];
-        $this->args = $_GET;
+        include('routes.php');
 
-        if ($route) {
-            $path = $route->controller;
-            $this->args = $route->pathVariables;
-        } else {
-            $subdomainFolder = "";
-            $subdomain = str_replace($this->config->get('NAKED_DOMAIN'), '', $this->domain);
-            if (substr($subdomain, -1) == '.') {
-                $subdomain = substr($subdomain, 0, -1);
-                if ($subdomain != $this->config->get('DEFAULT_SUBDOMAIN')) {
-                    $subdomainFolder = '_' . $subdomain . '_/';
 
-                    if (!is_dir('pages/' . $subdomainFolder)) {
-                        if (is_dir('pages/' . '_*_/')) {
-                            $subdomainFolder = '_*_/';
-                        }
-                    }
-                    $this->args['subdomain'] = $subdomain;
-                }
+        foreach($this->routers as $router){
+            if($router->findRoute()){
+                $this->displayRoute($router->getDetails());
+                exit();
+            }
+        }
+
+
+
+        $this->notFound();
+
+    }
+
+    public function displayRoute($routeDetails){
+        $type = $routeDetails->type;
+        $controllerPath = false;
+        $args = array();
+        $type = $routeDetails->type;
+        if(isset($routeDetails->controller)){
+            $controllerPath = $routeDetails->controller;
+        }
+        if(isset($routeDetails->variables)){
+            $args = $routeDetails->variables;
+        }
+
+
+        if($type == 'controller'){
+            include 'pages/' . $controllerPath . 'Controller.php';
+            $controller = new Controller();
+            $controller->set_args($args);
+            $controller->session = $this->getSessionHandler();
+            if ($controller->templateEnabled !== false && $this->template instanceof TemplateBridgeInterface) {
+                $controller->setTemplateBridge($this->template);
+                $controller->view = $controllerPath . 'view';
             }
 
-            $path = \MadLab\Cornerstone\Utilities\Url::convertUrlToPath($this->url);
-            $path = $subdomainFolder . $path;
+            $controller->get();
+            $controller->display();
         }
-
-        if (empty($path)) {
-            $controllerPath = '';
-        } elseif (is_dir('pages/' . $path) && is_readable('pages/' . $path . '/Controller.php')) {
-            $controllerPath = $path . '/';
-        } elseif (is_readable('pages/' . $path) && is_file('pages/' . $path)) {
-            $file = 'pages/' . $path;
-
-            $filePathInfo = pathinfo($file);
-            $fileExtension = $filePathInfo['extension'];
-            switch ($fileExtension) {
-                case 'css':
-                    header("Content-type: text/css");
-                    break;
-                case 'js':
-                    header("Content-type: text/javascript");
-                    break;
-                case 'svg':
-                    header("Content-Type: image/svg+xml");
-                    break;
-                default:
-                    if (function_exists('finfo_open')) {
-                        $finfo = finfo_open(FILEINFO_MIME_TYPE); // return mime type ala mimetype extension
-                        header("Content-type: " . finfo_file($finfo, $file));
-                        finfo_close($finfo);
-                    } elseif (function_exists('mime_content_type')) {
-                        header("Content-type: " . mime_content_type($file));
-                    } else {
-                        header("Content-type: text/plain");
-                    }
-            }
-            readfile($file);
-            die();
-        } else {
-            $this->notFound();
+        elseif($type == 'file'){
+            header($routeDetails->header);
+            readfile($routeDetails->file);
         }
-
-        include 'pages/' . $controllerPath . 'Controller.php';
-        $controller = new Controller();
-        $controller->set_args($this->args);
-
-        $controller->session = $this->getSessionHandler();
-        if ($controller->templateEnabled !== false && $this->template instanceof TemplateBridgeInterface) {
-            $controller->setTemplateBridge($this->template);
-            $controller->view = $controllerPath . 'view';
-        }
-
-        $controller->get();
-        $controller->display();
-
-
     }
 
     public function detectEnvironment($environments = array())
@@ -176,22 +148,6 @@ class   App
         $this->template = $template;
     }
 
-    /**
-     * Attempts to match the current URL to a custom route in the routes.php file
-     * @return boolean|Route returns the matching Route if found, false otherwise
-     */
-    private function findCustomRoute()
-    {
-        include('routes.php');
-        foreach (Router::$routes as $route) {
-            if ($route->matchUrl($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
-                return $route;
-            }
-        }
-        return false;
-    }
-
-
     public static function redirect($location, $status = false)
     {
         if ($status == '301') {
@@ -226,6 +182,9 @@ class   App
             $controller->get();
             $controller->display();
             die();
+        }
+        else{
+            echo "404 Not Found";
         }
     }
 
