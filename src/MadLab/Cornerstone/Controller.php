@@ -61,7 +61,7 @@ class Controller
     public function process($template)
     {
         if ($this->templateEnabled) {
-            $this->templateBridge->process($template);
+            return $this->templateBridge->process($template);
         } else {
             throw new \Exception('Template Handler Not Enabled');
         }
