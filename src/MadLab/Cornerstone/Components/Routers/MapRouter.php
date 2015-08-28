@@ -137,7 +137,7 @@ class MapRouter
             }
         }
 
-        preg_match_all("|<([-_a-zA-Z0-9]+)>|", $this->path, $namedParameterMatches);
+        preg_match_all("#<([-_a-zA-Z0-9]+)>#", $this->path, $namedParameterMatches);
         if ($namedParameterMatches[0]) {
             $pathRegex = $this->path;
 
@@ -152,7 +152,7 @@ class MapRouter
             }
 
             //try matching url ignoring querystring
-            if (preg_match('|^' . $pathRegex . '$|', $basePath, $pathMatches)) {
+            if (preg_match('#^' . $pathRegex . '$#', $basePath, $pathMatches)) {
                 array_shift($pathMatches);
                 foreach ($pathMatches as $match) {
                     $this->pathVariables[array_shift($pathVariables)] = $match;
@@ -161,7 +161,7 @@ class MapRouter
             }
 
             //try again using querystring
-            if (preg_match('|^' . $pathRegex . '$|', $path, $pathMatches)) {
+            if (preg_match('#^' . $pathRegex . '$#', $path, $pathMatches)) {
                 array_shift($pathMatches);
                 foreach ($pathMatches as $match) {
                     $this->pathVariables[array_shift($pathVariables)] = $match;
