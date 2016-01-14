@@ -21,7 +21,7 @@
         "codeception/codeception": "*",
         "vlucas/phpdotenv": "^2.2",
         "pimple/pimple": "^3.0",
-        "league/route": "^1.2",
+        "league/route": "^1.2"
     },
     "autoload": {
         "psr-0": {
