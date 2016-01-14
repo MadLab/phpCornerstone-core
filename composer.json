@@ -1,7 +1,7 @@
 {
-    "name": "MadLab/PHPCornerstone-Core",
+    "name": "madlab/phpcornerstone-core",
     "type": "framework",
-    "description": "PHP Cornerstone: an MVC framework focused on code organization, intelligent routing, and facilitating DRY principles.",
+    "description": "PHP Cornerstone: An elegant, minimalist MVC framework.",
     "keywords": ["framework, mvc"],
     "homepage": "http://www.phpcornerstone.com",
     "authors": [
@@ -15,7 +15,13 @@
         }
     ],
     "require": {
-        "php": ">=5.3"
+        "php": ">=7.0",
+        "symfony/http-foundation": "~2.6.7",
+        "nesbot/carbon": "~1.19.0",
+        "codeception/codeception": "*",
+        "vlucas/phpdotenv": "^2.2",
+        "pimple/pimple": "^3.0",
+        "league/route": "^1.2",
     },
     "autoload": {
         "psr-0": {
