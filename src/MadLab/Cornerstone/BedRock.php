@@ -1,6 +1,6 @@
 <?php
 
-namespace MadLab;
+namespace MadLab\Cornetstone;
 
 use Carbon\Carbon;
 use League\Route\Http\Exception;
