@@ -18,7 +18,7 @@ class SmartyTemplateBridge implements TemplateBridgeInterface{
     }
 
     public function display($view){
-        $this->smarty->display($view . '.tpl');
+        $this->smarty->display($view);
     }
 
     public function setTemplateDir($dir){

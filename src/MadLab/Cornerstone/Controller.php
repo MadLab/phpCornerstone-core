@@ -2,7 +2,6 @@
 
 namespace MadLab\Cornerstone;
 
-
 class Controller
 {
 
@@ -12,9 +11,9 @@ class Controller
 
 	function __construct()
 	{
-		global $container;
-		$this->container = $container;
-
+		$cornerstone = Cornerstone::getInstance();
+		$this->template = $cornerstone->getTemplateEngine();
+		$this->container = $cornerstone->getDIContainer();
 	}
 
 	public function require (\string $service)
@@ -22,10 +21,13 @@ class Controller
 		return $this->container[$service];
 	}
 
-	public function render($view, $params)
+	public function render(\string $view, array $params = [])
 	{
-		$twig = $this->require('Twig');
-		return $twig->render($view . '.twig', $params);
-	}
 
+
+		foreach ($params as $key => $value) {
+			$this->template->set($key, $value);
+		}
+		return $this->template->process($view);
+	}
 }

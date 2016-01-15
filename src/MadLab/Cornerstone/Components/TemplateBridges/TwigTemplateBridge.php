@@ -16,7 +16,7 @@ class TwigTemplateBridge implements TemplateBridgeInterface{
     }
 
     public function process($view){
-        return $this->twig->render($view . '.twig', $this->context);
+        return $this->twig->render($view, $this->context);
     }
 
     public function display($view){

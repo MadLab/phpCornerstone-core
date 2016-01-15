@@ -1,6 +1,6 @@
 <?php
 
-namespace MadLab\Cornerstone\Components\DataStores\MySql;
+namespace MadLab\Cornerstone\Components\DataStores\MySQL;
 use \PDO;
 use \Exception;
 
@@ -19,7 +19,21 @@ class MySQL
     private function __construct(PDO $pdoConnection)
     {
         static::$connection = $pdoConnection;
+    }
 
+    public static function getConnection(PDO $pdoConnection)
+    {
+        /*
+        * Returns the last database connection if available,
+         * otherwise initializes a new database connection
+        */
+
+        if (static::$connection) {
+            return static::$connection;
+        } else {
+            new MySQL($pdoConnection);
+            return static::$connection;
+        }
     }
 
     public static function set($query, $params = array())
