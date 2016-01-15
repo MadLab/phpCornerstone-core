@@ -1,6 +1,6 @@
 <?php
 
-namespace MadLab\Cornetstone;
+namespace MadLab\Cornerstone;
 
 use Carbon\Carbon;
 use League\Route\Http\Exception;
@@ -15,7 +15,7 @@ class BedRock
 	private $fieldValues = [];
 	private $params;
 
-	function __construct(PDO $connection)
+	function __construct(\PDO $connection)
 	{
 		$this->connection = $connection;
 		if (!isset($this->fields)) {
