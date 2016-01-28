@@ -20,7 +20,7 @@ class Cornerstone
 	 * Cornerstone constructor.
 	 * @param string $path
 	 */
-	public function __construct(\String $path)
+	public function __construct(string $path)
 	{
 		$this->path = $path;
 	}
@@ -30,7 +30,7 @@ class Cornerstone
 	 * @param string $path
 	 * @return Cornerstone
 	 */
-	public static function getInstance(\String $path = '')
+	public static function getInstance(string $path = '') : Cornerstone
 	{
 		if (!isset(self::$instance)) {
 			self::$instance = new Cornerstone($path);
@@ -41,7 +41,7 @@ class Cornerstone
 	/**
 	 * @param array $requiredVars
 	 */
-	public function getEnvironment(array $requiredVars = [])
+	public function detectEnvironment(array $requiredVars = [])
 	{
 		$envPath = $this->path . '/config';
 
@@ -52,25 +52,31 @@ class Cornerstone
 		$dotEnv->required($requiredVars);
 	}
 
-	public function getDIContainer(){
+	public function getDIContainer() : Container
+	{
 		return $this->container;
 	}
+
 	public function setDIContainer(Container $container)
 	{
 		$this->container = $container;
 	}
 
-	public function getTemplateEngine(): TemplateBridgeInterface{
+	public function getTemplateEngine(): TemplateBridgeInterface
+	{
 		return $this->template;
 	}
+
 	public function setTemplateEngine(TemplateBridgeInterface $template)
 	{
 		$this->template = $template;
 	}
 
-	public function getDispatcher(){
+	public function getDispatcher() : Dispatcher
+	{
 		return $this->dispatcher;
 	}
+
 	public function setDispatcher(Dispatcher $dispatcher)
 	{
 		$this->dispatcher = $dispatcher;
